@@ -316,7 +316,6 @@ public class BoardGame extends View {
                         if (winnerside == 2)
                             Toast.makeText(getContext(), "The winner side is Red!!!", Toast.LENGTH_SHORT).show();
 
-
                     }
                     return true;
                 }
