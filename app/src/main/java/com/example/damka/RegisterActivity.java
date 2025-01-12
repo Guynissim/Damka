@@ -9,10 +9,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
     private EditText emailInput, passwordInput, confirmPasswordInput,registerUserNameInput;
     private Button registerButton;

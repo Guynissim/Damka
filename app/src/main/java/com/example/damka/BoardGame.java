@@ -87,6 +87,7 @@ public class BoardGame extends View {
     }
 
     private void makeSquaresArray(int w) {
+        int h = w;
         if (boardState != null) {
             Log.d("onDraw", "Applying pending board state.");
             for (int i = 0; i < NUM_OF_SQUARES; i++) {
@@ -96,13 +97,13 @@ public class BoardGame extends View {
                     // Create soldiers based on the state
 
                     if (state == 1)  // Side 1 soldier
-                        squares[i][j].soldier = new Soldier(squares[i][j].x, squares[i][j].y, Color.RED, w / 3, i, j, 1);
+                        squares[i][j].soldier = new Soldier(w / 2 + squares[i][j].x, h / 2 + squares[i][j].y, Color.RED, w / 3, i, j, 1);
                     else if (state == 2)  // Side 2 soldier
-                        squares[i][j].soldier = new Soldier(squares[i][j].x, squares[i][j].y, Color.BLACK, w / 3, i, j, 2);
+                        squares[i][j].soldier = new Soldier(w / 2 + squares[i][j].x, h / 2 + squares[i][j].y, Color.BLUE, w / 3, i, j, 2);
                     else if (state == 3) // Side 1 king
-                        squares[i][j].soldier = new King(squares[i][j].x, squares[i][j].y, Color.BLACK, w / 3, i, j, 1);
+                        squares[i][j].soldier = new King(w / 2 + squares[i][j].x, h / 2 + squares[i][j].y, Color.RED, w / 3, i, j, 1);
                     else if (state == 4) // Side 2 king
-                        squares[i][j].soldier = new King(squares[i][j].x, squares[i][j].y, Color.BLACK, w / 3, i, j, 2);
+                        squares[i][j].soldier = new King(w / 2 + squares[i][j].x, h / 2 + squares[i][j].y, Color.BLUE, w / 3, i, j, 2);
 
                 }
             }
@@ -240,20 +241,24 @@ public class BoardGame extends View {
                         }
                     }
                 }
-                break;
+
 
             case MotionEvent.ACTION_MOVE:
                 if (selectedSoldier != null) {
-                    selectedSoldier.Move((int) touchX, (int) touchY);
-                    Log.d("ACTION_MOVE", "Dragging soldier to: " + touchX + ", " + touchY);
+                    // Show a visual preview (optional, can add logic for ghost positioning)
+                    int centerX = (int) touchX;
+                    int centerY = (int) touchY;
+                    selectedSoldier.Move(centerX, centerY);
+                    Log.d("ACTION_MOVE", "Preview dragging soldier to: " + centerX + ", " + centerY);
                     invalidate();
                     return true;
                 }
-                break;
+
 
             case MotionEvent.ACTION_UP:
                 if (selectedSoldier != null) {
                     Log.d("ACTION_UP", "Released soldier.");
+                    updateColumnAndRow(selectedSoldier);
                     // Handle snapping and validation
                     if (!isValidSquare(selectedSoldier)) {
                         selectedSoldier.Move(selectedSoldier.lastX, selectedSoldier.lastY);
@@ -284,20 +289,19 @@ public class BoardGame extends View {
                     if (soldier instanceof King) {
                         king = (King) soldier;
                         if (isValidMove(king)) {
-                            handleMove();
                             king.Move(square.x + square.width / 2, square.y + square.height / 2);
                             square.soldier = king;
                             squares[king.lastColumn][king.lastRow].soldier = null;
                             updateLastPosition(king);
+                            handleMove();
                             Log.d("Snap Success", "King snapped to valid square: " + square.x + ", " + square.y);
                             invalidate();
-                            if (isSoldierJumped == true) {
+                            if (isSoldierJumped) {
                                 displyWinner();
                             }
                             return true;
                         }
                     } else if (isValidMove(soldier))
-                        handleMove();
                     soldier.Move(square.x + square.width / 2, square.y + square.height / 2);
                     squares[soldier.lastColumn][soldier.lastRow].soldier = null;
                     updateLastPosition(soldier);
@@ -308,8 +312,9 @@ public class BoardGame extends View {
                     } else
                         square.soldier = soldier;
                     Log.d("Snap Success", "Soldier snapped to valid square: " + square.x + ", " + square.y);
+                    handleMove();
                     invalidate();
-                    if (isSoldierJumped == true) {
+                    if (isSoldierJumped) {
                         int winnerside = isGameOver();
                         if (winnerside == 1)
                             Toast.makeText(getContext(), "The winner side is BLUE!!!", Toast.LENGTH_SHORT).show();
@@ -332,8 +337,7 @@ public class BoardGame extends View {
         int row = soldier.row;
         int color = soldier.color;
         int radius = soldier.radius;
-        King king = new King(x, y, color, radius, column, row, side);
-        return king;
+        return new King(x, y, color, radius, column, row, side);
     }
     //works perfectly but problematic when jumping on 2 soldiers in a row.
 
