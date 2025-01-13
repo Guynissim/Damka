@@ -180,7 +180,6 @@ public class BoardGame extends View {
         return board;
     }
 
-
     private void initBoard(Canvas canvas) {
         int x = 0;
         int y = 200;

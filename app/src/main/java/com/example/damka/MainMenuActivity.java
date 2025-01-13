@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,6 +15,7 @@ import com.google.firebase.auth.FirebaseUser;
 public class MainMenuActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Button newGameButton, loginLogoutButton, scoreboardButton;
+    private TextView userNameTextView;
     private FirebaseAuth mAuth;
 
     @Override
@@ -23,6 +25,7 @@ public class MainMenuActivity extends AppCompatActivity implements View.OnClickL
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         // Initialize buttons
+        userNameTextView = findViewById(R.id.userNameTextView);
         newGameButton = findViewById(R.id.newGameButton);
         newGameButton.setOnClickListener(this);
         scoreboardButton = findViewById(R.id.scoreboardButton);
@@ -32,12 +35,13 @@ public class MainMenuActivity extends AppCompatActivity implements View.OnClickL
 
         if (currentUser != null) {
             loginLogoutButton.setText("Logout");
+            String name = getName(currentUser);
+            userNameTextView.setText("UserName:  " + name);
         }
     }
 
     @Override
     public void onClick(View v) {
-        FirebaseUser currentUser = mAuth.getCurrentUser();
         if (v == newGameButton) {
             if (loginLogoutButton.getText().equals("Login")) {
                 Toast.makeText(this, "Unable to start a game. Log in first.", Toast.LENGTH_SHORT).show();
@@ -62,6 +66,12 @@ public class MainMenuActivity extends AppCompatActivity implements View.OnClickL
                 Toast.makeText(MainMenuActivity.this, "Logged out successfully.", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    private String getName(FirebaseUser currentUser) {
+        String gmail = currentUser.getEmail();
+        String name = gmail.replace("@gmail.com", "");
+        return name;
     }
 
 }

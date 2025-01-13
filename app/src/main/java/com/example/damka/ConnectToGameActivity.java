@@ -98,7 +98,7 @@ public class ConnectToGameActivity extends AppCompatActivity implements View.OnC
     }
 
     private void startGameActivity(String gameId, String playerId) {
-        Intent intent = new Intent(this, Game2Activity.class);
+        Intent intent = new Intent(this, GameActivity.class);
         intent.putExtra("gameId", gameId);
         intent.putExtra("playerId", playerId);
         startActivity(intent);
