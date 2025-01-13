@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 // לשלוח את הפקודות שאחראיות על תזוזה ולשאול האם הם בסדר. touch event, valid move...
 public class BoardGame extends View {
     private Square[][] squares;
@@ -145,6 +146,7 @@ public class BoardGame extends View {
         gameSessionManager.updateGameState(gameId, gameState);
         isMyTurn = false; // End the turn for the current player
     }
+
     private int[][] getBoardStateFromSquares() {
         int[][] updatedBoardState = new int[NUM_OF_SQUARES][NUM_OF_SQUARES];
         for (int i = 0; i < NUM_OF_SQUARES; i++) {
@@ -241,7 +243,7 @@ public class BoardGame extends View {
                         }
                     }
                 }
-
+                break;
 
             case MotionEvent.ACTION_MOVE:
                 if (selectedSoldier != null) {
@@ -253,7 +255,7 @@ public class BoardGame extends View {
                     invalidate();
                     return true;
                 }
-
+                break;
 
             case MotionEvent.ACTION_UP:
                 if (selectedSoldier != null) {
@@ -301,27 +303,28 @@ public class BoardGame extends View {
                             }
                             return true;
                         }
-                    } else if (isValidMove(soldier))
-                    soldier.Move(square.x + square.width / 2, square.y + square.height / 2);
-                    squares[soldier.lastColumn][soldier.lastRow].soldier = null;
-                    updateLastPosition(soldier);
+                    } else if (isValidMove(soldier)) {
+                        soldier.Move(square.x + square.width / 2, square.y + square.height / 2);
+                        squares[soldier.lastColumn][soldier.lastRow].soldier = null;
+                        updateLastPosition(soldier);
 
-                    if (soldier.side == 1 && soldier.column == 7 || soldier.side == 2 && soldier.column == 0) {
-                        king = becomeKing(soldier);
-                        square.soldier = king;
-                    } else
-                        square.soldier = soldier;
-                    Log.d("Snap Success", "Soldier snapped to valid square: " + square.x + ", " + square.y);
-                    handleMove();
-                    invalidate();
-                    if (isSoldierJumped) {
-                        int winnerside = isGameOver();
-                        if (winnerside == 1)
-                            Toast.makeText(getContext(), "The winner side is BLUE!!!", Toast.LENGTH_SHORT).show();
-                        if (winnerside == 2)
-                            Toast.makeText(getContext(), "The winner side is Red!!!", Toast.LENGTH_SHORT).show();
+                        if (soldier.side == 1 && soldier.column == 7 || soldier.side == 2 && soldier.column == 0) {
+                            king = becomeKing(soldier);
+                            square.soldier = king;
+                        } else
+                            square.soldier = soldier;
+                        Log.d("Snap Success", "Soldier snapped to valid square: " + square.x + ", " + square.y);
+                        handleMove();
+                        invalidate();
+                        if (isSoldierJumped) {
+                            int winnerside = isGameOver();
+                            if (winnerside == 1)
+                                Toast.makeText(getContext(), "The winner side is BLUE!!!", Toast.LENGTH_SHORT).show();
+                            if (winnerside == 2)
+                                Toast.makeText(getContext(), "The winner side is Red!!!", Toast.LENGTH_SHORT).show();
+                            return true;
+                        }
                     }
-                    return true;
                 }
             }
         }
